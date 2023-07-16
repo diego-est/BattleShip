@@ -9,6 +9,7 @@
 
 class State {
   std::vector<std::pair<char, int>> keybinds;
+  std::vector<std::pair<const char *, std::pair<int, int>>> decorations;
 };
 
 class Game {
@@ -19,7 +20,7 @@ class Board {
   std::vector<int> primary;
   std::vector<int> track;
 
-public:
+ public:
   size_t size;
 
   // constructor
@@ -36,7 +37,7 @@ class Ship {
   int hp;
   std::vector<bool> hits;
 
-public:
+ public:
   std::string horizontal;
   std::string vertical;
 };

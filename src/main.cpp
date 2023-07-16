@@ -5,12 +5,14 @@
  *      Version:  0.0.1
  *
  * ======================================================================== */
-#include "functions.h"
+#include <ncurses.h>
+
 #include <algorithm>
 #include <iostream>
-#include <ncurses.h>
 #include <string>
 #include <vector>
+
+#include "functions.h"
 
 int main() {
   /* screen setup */

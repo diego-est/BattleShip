@@ -24,5 +24,5 @@ release: format
 	$(CC) $(CPPFLAGS) -O2 $(SRC) -o $(RELEASE)
 
 format:
-	clang-format -i $(SRC)
+	clang-format -i $(SRC) --style="Google"
 
