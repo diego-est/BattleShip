@@ -1,11 +1,11 @@
 
 .POSIX:
 
-SRC = ./src/main.cpp
+SRC = ./src/main.cpp ./src/functions.cpp ./src/classes.cpp
 CC = clang++
-CPPFLAGS = -Wall -Wextra -pedantic
-DEBUG = ./build/debug/a.out
-RELEASE = ./build/release/game
+CPPFLAGS = -Wall -Wextra -pedantic -lncursesw
+DEBUG = ./build/debug
+RELEASE = ./build/release
 
 all: options build
 
