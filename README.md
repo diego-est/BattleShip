@@ -2,6 +2,10 @@
 
 Logo:
 ```
+ _               __        
+|_) _._|__|_| _ (_ |_ o._  
+|_)(_| |_ |_|(/___)| |||_) 
+                       |   
 ```
 
 [Hasbro instructions](https://www.hasbro.com/common/instruct/BattleShip_(2002).PDF)
