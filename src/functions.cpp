@@ -7,6 +7,10 @@
  * ======================================================================== */
 #include "functions.h"
 
+#include <algorithm>
+
+#include "classes.h"
+
 /* template print */
 template <typename T>
 void print(T e) {
@@ -17,28 +21,6 @@ void print(T e) {
 template <typename T>
 void println(T e) {
   std::cout << e << std::endl;
-}
-
-/* prints basic interface */
-void interface() {
-  const char *logo =
-      "\t\t _               __        \n"
-      "\t\t|_) _._|__|_| _ (_ |_ o._  \n"
-      "\t\t|_)(_| |_ |_|(/___)| |||_) \n"
-      "\t\t                       |   \n";
-  const char *info =
-      "\033[0;40mHit \033[1;31mr\033[0;40m to reset, "
-      "\033[1;31ml\033[0;40m to load "
-      "scores file, \033[1;31mh\033[0;40m for help              "
-      "                                                \033[0m\n";
-
-  std::vector<std::string> tracking = {
-      "0000000000", "0000000000", "0000000000", "0000000000", "0000000000",
-      "0000000000", "0000000000", "0000000000", "0000000000", "0000000000"};
-
-  std::cout << logo;
-  for (const auto &s : tracking) println(s);
-  std::cout << info;
 }
 
 /* checks if screen is valid */
@@ -54,7 +36,7 @@ void validate_screen(WINDOW *win) {
         "Terminal screen too small.\n"
         "Minimum size must be 80 columns, 25 rows.\n"
         "Your screen is %d columns, %d rows.\n"
-        "Hit enter to retry.\n\n",
+        "Press any key to retry.\n\n",
         x, y);
     refresh();
     getch();
@@ -62,4 +44,29 @@ void validate_screen(WINDOW *win) {
   }
 
   refresh();
+}
+
+// remove attributes from attribute vector
+void attr_remove(std::vector<int> *attr_vec, int attr) {
+  auto item_pos = std::find(attr_vec->begin(), attr_vec->end(), attr);
+
+  if (item_pos != attr_vec->end()) attr_vec->erase(item_pos);
+}
+
+/* function to display a window at a set position with a set number of
+ * attributes */
+void show_win(window window) {
+  // set attributes
+  for (const auto &attr : window.attrs) attron(attr);
+
+  // place characters on window
+  int i = 0;
+  for (const auto &graphic : window.graphic) {
+    mvwprintw(window.win, window.coords.first + i, window.coords.second, "%s",
+              graphic);
+    i++;
+  }
+
+  // unset attributes
+  for (const auto &attr : window.attrs) attroff(attr);
 }

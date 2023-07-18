@@ -7,15 +7,29 @@
  * ======================================================================== */
 #include "classes.h"
 
-class State {
-  std::vector<std::pair<char, int>> keybinds;
-  std::vector<std::pair<const char *, std::pair<int, int>>> decorations;
+#include <curses.h>
+
+#include "functions.h"
+
+Base::Base(window window) { windows.push_back(window); }
+
+void Base::show() {
+  for (const auto& window : windows) show_win(window);
+}
+
+void Base::add(window window) { windows.push_back(window); }
+
+/*
+// enum to represent currently open set of windows
+enum Group {
+  Menu,
+  Game,
 };
 
-class Game {
-  State mode;
-};
+ holds information about the current Mode of the program
+// class Mode
 
+holds information about the current state of a single board
 class Board {
   std::vector<int> primary;
   std::vector<int> track;
@@ -33,6 +47,7 @@ class Board {
   }
 };
 
+holds information about the current state of a ship
 class Ship {
   int hp;
   std::vector<bool> hits;
@@ -41,3 +56,4 @@ class Ship {
   std::string horizontal;
   std::string vertical;
 };
+*/

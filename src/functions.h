@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 #include <ncurses.h>
+#include "classes.h"
 
 // print helper function
 template <class T> void print(T);
@@ -23,4 +24,9 @@ void interface();
 bool screen_is_valid(int x, int y);
 
 void validate_screen(WINDOW *win);
+
+void show_win(window window);
+
+
+void attr_remove(std::vector<int>* attr_vec, int attr);
 #endif
