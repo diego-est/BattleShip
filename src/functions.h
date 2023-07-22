@@ -14,9 +14,10 @@
 #include "classes.h"
 
 // print helper function
-template <class T> void print(T);
+template <typename T> void print(T e);
+
 // print helper function as above but inserts an endline and clears terminal buffer
-template <class T> void println(T);
+template <typename T> void println(T e);
 
 // interface stuff
 void interface();
@@ -25,8 +26,15 @@ bool screen_is_valid(int x, int y);
 
 void validate_screen(WINDOW *win);
 
-void show_win(window window);
+void show(Graphic*);
 
+void attr_remove(std::vector<int>& attr_vec, int attr);
 
-void attr_remove(std::vector<int>* attr_vec, int attr);
+void swap_attrs(std::vector<int>& attr_vec, int old_attr, int new_attr);
+
+char into_game();
+
+char into_menu();
+
+char exit_all();
 #endif

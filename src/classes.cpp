@@ -11,14 +11,11 @@
 
 #include "functions.h"
 
-Base::Base(window window) { windows.push_back(window); }
+ExitButton::ExitButton(Graphic* g) { graph = g; }
 
-void Base::show() {
-  for (const auto& window : windows) show_win(window);
-}
+OptionsButton::OptionsButton(Graphic* g) { graph = g; }
 
-void Base::add(window window) { windows.push_back(window); }
-
+GameButton::GameButton(Graphic* g) { graph = g; }
 /*
 // enum to represent currently open set of windows
 enum Group {

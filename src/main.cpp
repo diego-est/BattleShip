@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -23,10 +24,10 @@ int main() {
   noecho();
   validate_screen(stdscr);
 
-  std::vector<const char *> title = {
+  /* create main menu graphics */
+  std::vector<const char *> logo_text = {
       " _               __        ", "|_) _._|__|_| _ (_ |_ o._  ",
       "|_)(_| |_ |_|(/___)| |||_) ", "                       |   "};
-
   std::vector<const char *> play_text = {"+-+-+-+-+", "|P|l|a|y|", "+-+-+-+-+"};
   std::vector<const char *> menu_text = {"+-+-+-+-+", "|M|e|n|u|", "+-+-+-+-+"};
   std::vector<const char *> exit_text = {"+-+-+-+-+", "|E|x|i|t|", "+-+-+-+-+"};
@@ -36,50 +37,64 @@ int main() {
   std::vector<int> exit_attrs = {A_DIM};
   std::vector<int> logo_attrs = {A_BOLD};
 
-  window logo = {stdscr, title, logo_attrs, std::make_pair(1, 26)};
+  Graphic logo = {stdscr, logo_text, logo_attrs, std::make_pair(1, 26)};
+  Graphic play = {stdscr, play_text, play_attrs, std::make_pair(6, 35)};
+  Graphic menu = {stdscr, menu_text, menu_attrs, std::make_pair(10, 35)};
+  Graphic exit = {stdscr, exit_text, exit_attrs, std::make_pair(14, 35)};
 
-  window play_button = {stdscr, play_text, play_attrs, std::make_pair(6, 35)};
-  window menu_button = {stdscr, menu_text, menu_attrs, std::make_pair(10, 35)};
-  window exit_button = {stdscr, exit_text, exit_attrs, std::make_pair(14, 35)};
+  std::vector<Graphic *> graphics = {&logo, &play, &menu, &exit};
 
-  Base menu = logo;
-
-  menu.add(play_button);
-  menu.add(menu_button);
-  menu.add(exit_button);
-
-  menu.show();
-
+  for (const auto &g : graphics) show(g);
   refresh();
 
-  // window buttons[3] = {play_button, menu_button, exit_button};
+  /* create main menu buttons */
+  GameButton g_button(&play);
+  OptionsButton o_button(&menu);
+  ExitButton e_button(&exit);
 
-  // int active_button = 0;
-  // int last_button;
+  std::vector<AbstractButton *> buttons = {&g_button, &o_button, &e_button};
 
-  // int ch = getch();
-  // while (ch != 'q') {
-  //   last_button = active_button;
-  //   switch (ch) {
-  //     case KEY_UP:
-  //       active_button = active_button == 2 ? 0 : active_button + 1;
-  //       break;
-  //     case KEY_DOWN:
-  //       active_button = active_button == 0 ? 2 : active_button - 1;
-  //       break;
-  //   }
+  /* game loop */
+  size_t active_button = 0;
+  size_t last_button = 0;
+  int ch = getch();
+  bool selected = false;
+  while (ch != 'q') {
+    /* handle keyboard events */
+    switch (ch) {
+      case KEY_UP:
+        if (active_button == 0)
+          active_button = 2;
+        else {
+          active_button--;
+        }
 
-  //  attr_remove(&buttons[last_button].attrs, A_BLINK);
-  //  buttons[last_button].attrs.push_back(A_DIM);
+        swap_attrs(buttons.at(active_button)->graph->attrs, A_DIM, A_BLINK);
+        swap_attrs(buttons.at(last_button)->graph->attrs, A_BLINK, A_DIM);
 
-  //  attr_remove(&buttons[active_button].attrs, A_DIM);
-  //  buttons[active_button].attrs.push_back(A_BLINK);
+        break;
+      case KEY_DOWN:
+        if (active_button == 2)
+          active_button = 0;
+        else {
+          active_button++;
+        }
+        swap_attrs(buttons.at(active_button)->graph->attrs, A_DIM, A_BLINK);
+        swap_attrs(buttons.at(last_button)->graph->attrs, A_BLINK, A_DIM);
+        break;
+      case 10:
+        buttons[active_button]->action();
+        break;
+    }
 
-  //  menu.show();
-  //  refresh();
-  //  ch = getch();
-  //}
+    for (const auto &g : graphics) show(g);
+    refresh();
+
+    ch = getch();
+    last_button = active_button;
+  }
   getch();
+
   endwin();
   refresh();
 

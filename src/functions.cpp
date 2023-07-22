@@ -8,6 +8,7 @@
 #include "functions.h"
 
 #include <algorithm>
+#include <vector>
 
 #include "classes.h"
 
@@ -46,27 +47,48 @@ void validate_screen(WINDOW *win) {
   refresh();
 }
 
-// remove attributes from attribute vector
-void attr_remove(std::vector<int> *attr_vec, int attr) {
-  auto item_pos = std::find(attr_vec->begin(), attr_vec->end(), attr);
+// remove attribute ints from attribute vector
+void attr_remove(std::vector<int> &attr_vec, int attr) {
+  std::cout << "removing..." << std::endl;
+  std::erase_if(attr_vec, [&](int x) { return x == attr; });
+  std::cout << "removed succesfully" << std::endl;
+}
 
-  if (item_pos != attr_vec->end()) attr_vec->erase(item_pos);
+void swap_attrs(std::vector<int> &attr_vec, int old_attr, int new_attr) {
+  std::cout << "AAAAAAAAAA" << std::endl;
+  std::replace(attr_vec.begin(), attr_vec.end(), old_attr, new_attr);
+  std::cout << "BBBBBBBBBB" << std::endl;
 }
 
 /* function to display a window at a set position with a set number of
- * attributes */
-void show_win(window window) {
+ * attributes
+ */
+void show(Graphic *graph) {
   // set attributes
-  for (const auto &attr : window.attrs) attron(attr);
+  for (const auto &attr : graph->attrs) attron(attr);
 
-  // place characters on window
+  // place characters on graph
   int i = 0;
-  for (const auto &graphic : window.graphic) {
-    mvwprintw(window.win, window.coords.first + i, window.coords.second, "%s",
+  for (const auto &graphic : graph->graphic) {
+    mvwprintw(graph->win, graph->coords.first + i, graph->coords.second, "%s",
               graphic);
     i++;
   }
 
   // unset attributes
-  for (const auto &attr : window.attrs) attroff(attr);
+  for (const auto &attr : graph->attrs) attroff(attr);
+}
+
+void close() {
+  endwin();
+  refresh();
+}
+
+char into_game() { return ' '; }
+
+char into_menu() { return ' '; }
+
+char exit_all() {
+  std::cout << "help" << std::endl;
+  return 'q';
 }
