@@ -8,6 +8,7 @@
 #include "functions.h"
 
 #include <algorithm>
+#include <utility>
 #include <vector>
 
 #include "classes.h"
@@ -47,19 +48,6 @@ void validate_screen(WINDOW *win) {
   refresh();
 }
 
-// remove attribute ints from attribute vector
-void attr_remove(std::vector<int> &attr_vec, int attr) {
-  std::cout << "removing..." << std::endl;
-  std::erase_if(attr_vec, [&](int x) { return x == attr; });
-  std::cout << "removed succesfully" << std::endl;
-}
-
-void swap_attrs(std::vector<int> &attr_vec, int old_attr, int new_attr) {
-  std::cout << "AAAAAAAAAA" << std::endl;
-  std::replace(attr_vec.begin(), attr_vec.end(), old_attr, new_attr);
-  std::cout << "BBBBBBBBBB" << std::endl;
-}
-
 /* function to display a window at a set position with a set number of
  * attributes
  */
@@ -77,6 +65,8 @@ void show(Graphic *graph) {
 
   // unset attributes
   for (const auto &attr : graph->attrs) attroff(attr);
+
+  refresh();
 }
 
 void close() {

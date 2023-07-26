@@ -17,7 +17,7 @@ class Graphic {
   public:
   WINDOW* win;
   std::vector<const char *> graphic;
-  std::vector<int> attrs;
+  std::vector<unsigned int> attrs;
   std::pair<int, int> coords;
 };
 
@@ -25,38 +25,32 @@ struct Event;
 
 class AbstractButton {
   public:
-  Graphic* graph;
+  Graphic * graph;
   virtual void action() = 0;
 };
 
 class ExitButton : public AbstractButton {
   public:
-    Graphic* graph;
-    void action() override {
-      endwin();
-      refresh();
-      std::cout << "exited succesfully" << std::endl;
-      exit(0);
-    }
-    ExitButton(Graphic*);
+    Graphic * graph;
+    void action() override;
+    ExitButton(Graphic *);
+    ~ExitButton();
 
 };
-class OptionsButton : public AbstractButton {
+class OptsButton : public AbstractButton {
   public:
-    Graphic* graph;
-    void action() override {
-      std::cout << "opened options" << std::endl;
-    }
-    OptionsButton(Graphic*);
+    Graphic * graph;
+    void action() override;
+    OptsButton(Graphic *);
+    ~OptsButton();
 };
 
 class GameButton : public AbstractButton {
   public:
-    Graphic* graph;
-    void action() override {
-            std::cout << "opened game" << std::endl;
-    }
-    GameButton(Graphic*);
+    Graphic * graph;
+    void action() override;
+    GameButton(Graphic *);
+    ~GameButton();
 };
 
 // Base class

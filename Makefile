@@ -3,7 +3,7 @@
 
 SRC = ./src/main.cpp ./src/functions.cpp ./src/classes.cpp
 CC = clang++
-CPPFLAGS = -Wall -Wextra -pedantic -lncursesw --std=c++20
+CPPFLAGS = -Wall -Wextra -pedantic -lncursesw --std=c++2b
 DEBUG = ./build/debug
 RELEASE = ./build/release
 

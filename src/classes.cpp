@@ -11,46 +11,25 @@
 
 #include "functions.h"
 
-ExitButton::ExitButton(Graphic* g) { graph = g; }
+/* ExitButton functionality */
+ExitButton::ExitButton(Graphic *g) { graph = g; }
+ExitButton::~ExitButton() { std::cout << "Deleted Exit button" << std::endl; };
 
-OptionsButton::OptionsButton(Graphic* g) { graph = g; }
+void ExitButton::action() {
+  endwin();
+  refresh();
+  std::cout << "exited succesfully" << std::endl;
+  exit(0);
+}
 
-GameButton::GameButton(Graphic* g) { graph = g; }
-/*
-// enum to represent currently open set of windows
-enum Group {
-  Menu,
-  Game,
-};
+/* OptsButton functionality */
+OptsButton::OptsButton(Graphic *g) { graph = g; }
+OptsButton::~OptsButton() { std::cout << "Deleted Opts button" << std::endl; };
 
- holds information about the current Mode of the program
-// class Mode
+void OptsButton::action() { std::cout << "opened options" << std::endl; }
 
-holds information about the current state of a single board
-class Board {
-  std::vector<int> primary;
-  std::vector<int> track;
+/* GameButton functionality */
+GameButton::GameButton(Graphic *g) { graph = g; }
+GameButton::~GameButton() { std::cout << "Deleted Game button" << std::endl; };
 
- public:
-  size_t size;
-
-  // constructor
-  Board() {
-    size = 10;
-    primary.reserve(size * size);
-    std::fill(primary.begin(), primary.end(), 1);
-    track.reserve(size * size);
-    std::fill(track.begin(), track.end(), 0);
-  }
-};
-
-holds information about the current state of a ship
-class Ship {
-  int hp;
-  std::vector<bool> hits;
-
- public:
-  std::string horizontal;
-  std::string vertical;
-};
-*/
+void GameButton::action() { std::cout << "opened game" << std::endl; }

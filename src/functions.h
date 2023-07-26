@@ -28,10 +28,6 @@ void validate_screen(WINDOW *win);
 
 void show(Graphic*);
 
-void attr_remove(std::vector<int>& attr_vec, int attr);
-
-void swap_attrs(std::vector<int>& attr_vec, int old_attr, int new_attr);
-
 char into_game();
 
 char into_menu();
