@@ -13,24 +13,14 @@
 #include <ncurses.h>
 #include "classes.h"
 
-// print helper function
-template <typename T> void print(T e);
-
-// print helper function as above but inserts an endline and clears terminal buffer
-template <typename T> void println(T e);
+/* template print */
+auto print = [](const auto& e) { std::cout << e; };
+auto println = [](const auto& e) { std::cout << e << std::endl; };
 
 // interface stuff
-void interface();
-
 bool screen_is_valid(int x, int y);
 
 void validate_screen(WINDOW *win);
 
-void show(Graphic*);
-
-char into_game();
-
-char into_menu();
-
-char exit_all();
+void show(Graphic&);
 #endif

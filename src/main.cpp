@@ -20,6 +20,7 @@ int main() {
   /* screen setup */
   initscr();
   cbreak();
+  curs_set(0);
   keypad(stdscr, TRUE);
   noecho();
   validate_screen(stdscr);
@@ -48,7 +49,7 @@ int main() {
   auto graphics = std::vector<Graphic *>{&logo, &play, &menu, &exit};
 
   /* show graphics */
-  for (const auto &g : graphics) show(g);
+  for (const auto &g : graphics) show(*g);
 
   /* create main menu buttons */
   auto g_button = GameButton{&play};
@@ -99,7 +100,7 @@ int main() {
     }
 
     /* show graphics */
-    for (const auto &g : graphics) show(g);
+    for (const auto &g : graphics) show(*g);
 
     ch = getch();
   }
