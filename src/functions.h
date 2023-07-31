@@ -18,9 +18,9 @@ auto print = [](const auto& e) { std::cout << e; };
 auto println = [](const auto& e) { std::cout << e << std::endl; };
 
 // interface stuff
-bool screen_is_valid(int x, int y);
+auto screen_is_valid(int x, int y) -> bool;
 
-void validate_screen(WINDOW *win);
+auto validate_screen(WINDOW *win) -> void;
 
-void show(Graphic&);
+auto show(Graphic&) -> void;
 #endif

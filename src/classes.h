@@ -13,56 +13,89 @@
 #include <iostream>
 #include "ncurses.h"
 
+/* Gameplay skins */
+enum Skin {
+  Normal,
+  Donuts,
+  Inverted,
+};
+
+/* class to store various information about text to be displayed */
 class Graphic {
-  public:
-  WINDOW* win;
-  std::vector<const char *> graphic;
-  std::vector<unsigned int> attrs;
+  std::vector<const char *> text;
+  std::vector<unsigned int> attributes;
   std::pair<int, int> coords;
+
+  public:
+  Graphic(std::vector<const char *>, std::vector<unsigned int>, std::pair<int, int>);
+
+  /* non-modifying member functions */
+  auto get_text() const -> std::vector<const char *>;
+  auto get_attributes() const -> std::vector<unsigned int>;
+  auto get_coords() const -> std::pair<int, int>;
+
+  /* modifying member functions */
+  auto remove_attribute(unsigned int) -> void;
+  auto add_attribute(unsigned int) -> void;
+  auto swap_attributes(unsigned int, unsigned int) -> void;
 };
 
-struct Event;
+/* player class */
+class Player {
+  std::string name;
+  Skin skin;
+  unsigned int points;
 
+  public:
+  Player(const char *name);
+
+  /* non-modifying member functions */
+  auto get_name() const -> std::string;
+  auto get_skin() const -> Skin;
+  auto get_points() const -> unsigned int;
+
+  /* modifying member functions */
+  auto set_name(std::string) -> void;
+  auto set_skin(Skin) -> void;
+  auto set_points(unsigned int) -> void;
+};
+
+/* Button abstract class (to be derived) */
 class AbstractButton {
-  public:
   Graphic * graph;
-  virtual void action() = 0;
+  public:
+    auto get_graph() const -> Graphic *;
+    /* the syntax of all time */
+    virtual auto action() const -> void = 0;
 };
 
+/* main menu exit button */
 class ExitButton : public AbstractButton {
-  public:
     Graphic * graph;
-    void action() override;
+  public:
+    auto action() const -> void override;
     ExitButton(Graphic *);
     ~ExitButton();
 
 };
+
+/* settings button */
 class OptsButton : public AbstractButton {
-  public:
     Graphic * graph;
-    void action() override;
+  public:
+    auto action() const -> void override;
+    auto show_player(Player player) const -> void;
     OptsButton(Graphic *);
     ~OptsButton();
 };
 
+/* game button */
 class GameButton : public AbstractButton {
-  public:
     Graphic * graph;
-    void action() override;
+  public:
+    auto action() const -> void override;
     GameButton(Graphic *);
     ~GameButton();
 };
-
-// Base class
-/*
-class Base {
-  std::vector<window> windows;
-
-  public:
-  Base(window window);
-  void show();
-  void add(window window);
-};
-*/
 
 #endif
