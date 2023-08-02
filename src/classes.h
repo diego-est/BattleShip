@@ -20,6 +20,24 @@ enum Skin {
   Inverted,
 };
 
+/* accepted keyboard events */
+enum KeyPress {
+  Up,
+  Down,
+  Left,
+  Right,
+  h,
+  q,
+  r,
+  Enter,
+};
+
+/* */
+enum Orientation {
+  Vertical,
+  Horizontal
+};
+
 /* class to store various information about text to be displayed */
 class Graphic {
   std::vector<const char *> text;
@@ -28,6 +46,7 @@ class Graphic {
 
   public:
   Graphic(std::vector<const char *>, std::vector<unsigned int>, std::pair<int, int>);
+  Graphic();
 
   /* non-modifying member functions */
   auto get_text() const -> std::vector<const char *>;
@@ -38,6 +57,10 @@ class Graphic {
   auto remove_attribute(unsigned int) -> void;
   auto add_attribute(unsigned int) -> void;
   auto swap_attributes(unsigned int, unsigned int) -> void;
+  auto set_text(std::vector<const char *>) -> void;
+  auto set_attributes(std::vector<unsigned int>) -> void;
+  auto set_coords(int, int) -> void;
+  auto set_coords(std::pair<int, int>) -> void;
 };
 
 /* player class */
@@ -96,6 +119,31 @@ class GameButton : public AbstractButton {
     auto action() const -> void override;
     GameButton(Graphic *);
     ~GameButton();
+};
+
+
+class Ship : public Graphic {
+  std::vector<const char *> vertical;
+  std::vector<const char *> horizontal;
+  std::vector<unsigned int> attributes;
+  std::pair<int, int> coords;
+
+  public:
+  Ship(std::vector<const char *>, std::vector<const char *>, std::vector<unsigned int>, std::pair<int, int>);
+
+  /* non-modifying member functions */
+  auto get_vert() const -> std::vector<const char *>;
+  auto get_horz() const -> std::vector<const char *>;
+  auto get_attributes() const -> std::vector<unsigned int>;
+  auto get_coords() const -> std::pair<int, int>;
+  auto show(Orientation) const -> void;
+
+  /* modifying member functions */
+  auto remove_attribute(unsigned int) -> void;
+  auto add_attribute(unsigned int) -> void;
+  auto swap_attributes(unsigned int, unsigned int) -> void;
+  auto set_coords(int, int) -> void;
+  auto set_coords(std::pair<int, int>) -> void;
 };
 
 #endif
