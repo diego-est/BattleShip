@@ -3,7 +3,7 @@
 
 SRC = ./src/main.cpp ./src/functions.cpp ./src/classes.cpp
 CC = clang++
-CPPFLAGS = -Wall -Wextra -pedantic -lncursesw --std=c++2b
+CPPFLAGS = -Wconversion -Wall -Wextra -pedantic -lncursesw --std=c++2b
 DEBUG = ./build/debug
 RELEASE = ./build/release
 
@@ -21,8 +21,11 @@ build: format
 	$(CC) $(CPPFLAGS) -Og $(SRC) -o $(DEBUG)
 
 release: format
-	$(CC) $(CPPFLAGS) -O2 $(SRC) -o $(RELEASE)
+	$(CC) $(CPPFLAGS) -O3 $(SRC) -o $(RELEASE)
 
 format:
 	clang-format -i $(SRC) --style="{BasedOnStyle: Microsoft, ColumnLimit: 200}"
+
+check:
+	clang-tidy -extra-arg=-std=c++20 $(SRC)
 

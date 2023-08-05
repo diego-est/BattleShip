@@ -40,84 +40,83 @@ int main()
     auto logo_attrs = std::vector<unsigned int>{A_BOLD};
 
     auto logo = Graphic{logo_text, logo_attrs, std::make_pair(1, 26)};
-    auto play = Graphic{play_text, play_attrs, std::make_pair(6, 35)};
-    auto menu = Graphic{menu_text, menu_attrs, std::make_pair(10, 35)};
-    auto exit = Graphic{exit_text, exit_attrs, std::make_pair(14, 35)};
+    auto g_button = Graphic{play_text, play_attrs, std::make_pair(6, 35)};
+    auto o_button = Graphic{menu_text, menu_attrs, std::make_pair(10, 35)};
+    auto e_button = Graphic{exit_text, exit_attrs, std::make_pair(14, 35)};
 
-    auto graphics = std::vector<Graphic *>{&logo, &play, &menu, &exit};
+    auto graphics = std::vector<Graphic *>{&logo, &g_button, &o_button, &e_button};
 
-    /* show graphics */
-    for (const auto &g : graphics)
-        show(*g);
-
-    /* create main menu buttons */
-    auto g_button = GameButton(&play);
-    auto o_button = OptsButton(&menu);
-    auto e_button = ExitButton(&exit);
-
-    auto buttons = std::vector<AbstractButton *>{&(g_button), &(o_button), &(e_button)};
+    /* player logic */
+    auto p1 = Player("Gerald");
+    auto p2 = Player("Simon");
 
     /* game loop */
-    auto active_button = 0;
-    auto last_button = 0;
-    auto ch = getch();
-    while (ch != 'q')
+    auto active_button = 1u;
+    auto last_button = 1u;
+    while (auto ch = getch())
     {
-        /* handle keyboard events */
-        switch (ch)
-        {
-        case KEY_UP:
-            active_button = active_button == 0 ? 2 : active_button - 1;
-            break;
-        case KEY_DOWN:
-            active_button = active_button == 2 ? 0 : active_button + 1;
-            break;
-        case 10:
-            buttons.at(active_button)->action();
-            break;
-        }
-
-        /* THIS IS SO HORRID */
-        /* TODO: find a way to compact this */
-        switch (active_button)
-        {
-        case 0:
-            g_button.get_graph()->swap_attributes(A_DIM, A_BLINK);
-            break;
-        case 1:
-            o_button.get_graph()->swap_attributes(A_DIM, A_BLINK);
-            break;
-        case 2:
-
-            if (e_button.get_graph() == NULL)
-                std::cout << "this is null" << std::endl;
-            std::cout << "outside function" << std::endl;
-            e_button.get_graph()->remove_attribute(A_DIM);
-            std::cout << "before adding";
-            e_button.get_graph()->add_attribute(A_BLINK);
-            break;
-        }
-        std::cout << "before last_button" << std::endl;
-        switch (last_button)
-        {
-        case 0:
-            g_button.get_graph()->swap_attributes(A_BLINK, A_DIM);
-            break;
-        case 1:
-            o_button.get_graph()->swap_attributes(A_BLINK, A_DIM);
-            break;
-        case 2:
-            e_button.get_graph()->swap_attributes(A_BLINK, A_DIM);
-            break;
-        }
-
         /* show graphics */
         for (const auto &g : graphics)
             show(*g);
 
+        /* handle keyboard events */
+        auto key_press = parse_key(ch);
+        switch (key_press)
+        {
+        case KeyPress::Illegal:
+            goto exit;
+            break;
+
+        case KeyPress::Up:
+            active_button = active_button == 1 ? 3 : active_button - 1;
+            break;
+
+        case KeyPress::Down:
+            active_button = active_button == 3 ? 1 : active_button + 1;
+            break;
+
+        case KeyPress::Enter:
+            /* launch active_button */
+            switch (active_button)
+            {
+            case 1:
+                start_game(p1, p2);
+                break;
+
+            case 2:
+                open_options();
+                break;
+
+            case 3:
+                key_press = KeyPress::q;
+            }
+            break;
+
+        case KeyPress::Left:
+            break;
+
+        case KeyPress::Right:
+            break;
+
+        case KeyPress::h:
+            show_help();
+            break;
+
+        case KeyPress::q:
+            goto exit;
+            break;
+
+        case KeyPress::r:
+            break;
+        }
+
+        /* button change logic */
+        graphics.at(last_button)->swap_attributes(A_BLINK, A_DIM);
+        graphics.at(active_button)->swap_attributes(A_DIM, A_BLINK);
         last_button = active_button;
-        ch = getch();
     }
+
+exit:
 
     endwin();
     refresh();
