@@ -25,6 +25,7 @@ Graphic::Graphic()
     this->attributes = std::vector<unsigned int>{};
     this->coords = std::make_pair(0, 0);
 }
+
 /* constructor using span and std::pair to group coordinates */
 Graphic::Graphic(std::span<const char *> text, std::span<unsigned int> attributes, std::pair<size_t, size_t> coords)
 {
@@ -32,6 +33,7 @@ Graphic::Graphic(std::span<const char *> text, std::span<unsigned int> attribute
     this->attributes.assign(attributes.begin(), attributes.end());
     this->coords = coords;
 }
+
 /* constructor using span and two size_t coordinates */
 Graphic::Graphic(std::span<const char *> text, std::span<unsigned int> attributes, size_t rows, size_t cols)
 {
@@ -39,6 +41,7 @@ Graphic::Graphic(std::span<const char *> text, std::span<unsigned int> attribute
     this->attributes.assign(attributes.begin(), attributes.end());
     this->coords = std::make_pair(rows, cols);
 }
+
 /* constructor using initializer list and two size_t coordinates */
 Graphic::Graphic(std::initializer_list<const char *> text, std::initializer_list<unsigned int> attributes, size_t rows, size_t cols)
 {
@@ -46,6 +49,7 @@ Graphic::Graphic(std::initializer_list<const char *> text, std::initializer_list
     this->attributes.assign(attributes.begin(), attributes.end());
     this->coords = std::make_pair(rows, cols);
 }
+
 /* constructor using initializer list and std::pair to group coordinates */
 Graphic::Graphic(std::initializer_list<const char *> text, std::initializer_list<unsigned int> attributes, std::pair<size_t, size_t> coords)
 {
@@ -66,6 +70,24 @@ Graphic::Graphic(std::initializer_list<const char *> text, std::initializer_list
 [[nodiscard]] auto Graphic::get_coords() const -> std::pair<size_t, size_t>
 {
     return coords;
+}
+
+/* modifying member setter functions */
+auto Graphic::set_text(std::span<const char *> text) -> void
+{
+    this->text.assign(text.begin(), text.end());
+}
+auto Graphic::set_attributes(std::span<unsigned int> attributes) -> void
+{
+    this->attributes.assign(attributes.begin(), attributes.end());
+}
+auto Graphic::set_coords(size_t rows, size_t cols) -> void
+{
+    this->coords = std::make_pair(rows, cols);
+}
+auto Graphic::set_coords(std::pair<size_t, size_t> coords) -> void
+{
+    this->coords = coords;
 }
 
 /* function to display a graphic using its internal state */
@@ -90,7 +112,7 @@ auto Graphic::show() const -> void
     refresh();
 }
 
-/* modifying member functions */
+
 // TODO: test remove_attribute
 /* removes a specific attribute from its vector of attributes */
 auto Graphic::remove_attribute(unsigned int attribute) -> void
@@ -100,34 +122,19 @@ auto Graphic::remove_attribute(unsigned int attribute) -> void
     // static_cast<void>() to discard return value from std::remove()
     static_cast<void>(std::remove(f, l, attribute));
 }
+
 /* simply pushes an attribute into its attribute vector */
 auto Graphic::add_attribute(unsigned int attribute) -> void
 {
     this->attributes.push_back(attribute);
 }
+
 /* swaps a specific attribute with another attribute in its attribute vector */
 auto Graphic::swap_attributes(unsigned int old_attribute, unsigned int new_attribute) -> void
 {
     ra::replace(this->attributes, old_attribute, new_attribute);
 }
 
-/* class member setter functions */
-auto Graphic::set_text(std::span<const char *> text) -> void
-{
-    this->text.assign(text.begin(), text.end());
-}
-auto Graphic::set_attributes(std::span<unsigned int> attributes) -> void
-{
-    this->attributes.assign(attributes.begin(), attributes.end());
-}
-auto Graphic::set_coords(size_t rows, size_t cols) -> void
-{
-    this->coords = std::make_pair(rows, cols);
-}
-auto Graphic::set_coords(std::pair<size_t, size_t> coords) -> void
-{
-    this->coords = coords;
-}
 
 /* ==================== Ship class definitions ==================== */
 /* default constructor */
@@ -138,6 +145,7 @@ Ship::Ship()
     this->attributes = std::vector<unsigned int>{};
     this->coords = std::make_pair<size_t, size_t>(0, 0);
 }
+
 /* constructor using vectors and std::pair to group coordinates */
 Ship::Ship(std::vector<const char *> vertical, std::vector<const char *> horizontal, std::vector<unsigned int> attributes, std::pair<int, int> coords)
 {
@@ -146,6 +154,7 @@ Ship::Ship(std::vector<const char *> vertical, std::vector<const char *> horizon
     this->attributes = attributes;
     this->coords = coords;
 }
+
 /* constructor using initializer lists and two size_t coordinates */
 Ship::Ship(std::initializer_list<const char *> vertical, std::initializer_list<const char *> horizontal, std::initializer_list<unsigned int> attributes, size_t rows, size_t cols)
 {
@@ -154,6 +163,7 @@ Ship::Ship(std::initializer_list<const char *> vertical, std::initializer_list<c
     this->attributes.assign(attributes.begin(), attributes.end());
     this->coords = std::make_pair(rows, cols);
 }
+
 /* constructor using initializer lists and std::pair to group coordinates */
 Ship::Ship(std::initializer_list<const char *> vertical, std::initializer_list<const char *> horizontal, std::initializer_list<unsigned int> attributes, std::pair<size_t, size_t> coords)
 {

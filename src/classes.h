@@ -15,6 +15,7 @@
 #include <iostream>
 #include "ncurses.h"
 
+/* =========== enums =========== */
 /* Gameplay skins */
 enum Skin {
   Normal,
@@ -81,6 +82,7 @@ class Graphic {
   std::pair<size_t, size_t> coords;
 
   public:
+  /* constructors */
   Graphic(std::span<const char *>, std::span<unsigned int>, std::pair<size_t, size_t>);
   Graphic(std::span<const char *>, std::span<unsigned int>, size_t, size_t);
   Graphic(std::initializer_list<const char *> text, std::initializer_list<unsigned int> attributes, size_t rows, size_t cols);
@@ -112,6 +114,7 @@ class Ship : public Graphic {
   std::pair<size_t, size_t> coords;
 
   public:
+  /* constructors */
   Ship();
   Ship(std::vector<const char *>, std::vector<const char *>, std::vector<unsigned int>, std::pair<int, int>);
   Ship(std::initializer_list<const char *> vertical, std::initializer_list<const char *> horizontal, std::initializer_list<unsigned int> attributes, std::pair<size_t, size_t> coords);
@@ -148,6 +151,7 @@ class Player {
   std::map<ShipName, std::map<Skin, std::pair< std::initializer_list<const char *>, std::initializer_list<const char *>>>> ship_skins;
 
   public:
+  /* constructors */
   Player(const char *name, Skin skin = Skin::Normal);
 
   /* non-modifying member functions */
