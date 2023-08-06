@@ -10,6 +10,7 @@
 #include <curses.h>
 
 #include <algorithm>
+#include <map>
 #include <utility>
 #include <vector>
 
@@ -17,13 +18,14 @@
 
 /* checks if screen is valid */
 // TODO: update values as screen gets resized
-[[nodiscard]] auto screen_is_valid(std::pair<std::size_t, std::size_t> size) -> bool
+[[nodiscard]] auto screen_is_valid(const std::pair<std::size_t, std::size_t> size) -> bool
 {
     return (size.first >= 25 && size.second >= 80);
 }
 
 /* validates a screen size */
-auto validate_screen(WINDOW *win) -> void
+// TODO: update values as screen gets resized
+auto validate_screen(const WINDOW *win) -> void
 {
     auto y = getmaxy(win);
     auto x = getmaxx(win);
@@ -35,11 +37,12 @@ auto validate_screen(WINDOW *win) -> void
                "Minimum size must be 80 columns, 25 rows.\n"
                "Your screen is %d columns, %d rows.\n"
                "Press any key to retry.\n\n",
-               size.first, size.second);
+               size.second, size.first);
         refresh();
         mvgetch(0, 0);
         clear();
         getmaxyx(win, y, x);
+        size = std::make_pair(y, x);
     }
 
     refresh();
@@ -48,7 +51,7 @@ auto validate_screen(WINDOW *win) -> void
 /* function to display a window at a set position with a set number of
  * attributes
  */
-auto show(Graphic &graph) -> void
+auto show(const Graphic &graph) -> void
 {
     // set attributes
     for (const auto &a : graph.get_attributes())
@@ -75,7 +78,7 @@ auto show_help() -> void
 }
 
 /* key parser */
-[[nodiscard]] auto parse_key(int ch) -> KeyPress
+[[nodiscard]] auto parse_key(const int ch) -> KeyPress
 {
     switch (ch)
     {
@@ -110,63 +113,102 @@ auto show_help() -> void
     }
 }
 
+[[nodiscard]] auto ship_skin(const ShipName name, const Skin skin, const Orientation orientation) -> std::vector<const char *>
+{
+    /* Carrier */
+    auto carrier = std::map<Skin, std::pair<const char *, std::vector<const char *>>>{};
+    carrier[Skin::Normal] = std::make_pair("[XXXXXXX]", std::vector{"M", "X", "X", "X", "W"});
+    carrier[Skin::Donuts] = std::make_pair("TODO", std::vector{"T", "O", "D", "O"});
+    carrier[Skin::Inverted] = std::make_pair("[XXXXXXX]", std::vector{"M", "X", "X", "X", "W"});
+
+    /* Battleship */
+    auto battleship = std::map<Skin, std::pair<const char *, std::vector<const char *>>>{};
+    battleship[Skin::Normal] = std::make_pair("<&&&&&>", std::vector{"A", "&", "&", "V"});
+    battleship[Skin::Donuts] = std::make_pair("", std::vector{""});
+
+    /* Destroyer */
+    auto destroyer = std::map<Skin, std::pair<const char *, std::vector<const char *>>>{};
+    /* Submarine */
+    auto submarine = std::map<Skin, std::pair<const char *, std::vector<const char *>>>{};
+    /* Patrol */
+    auto patrol = std::map<Skin, std::pair<const char *, std::vector<const char *>>>{};
+
+    /* map of all the ships */
+    auto mp = std::map<ShipName, std::map<Skin, std::pair<const char *, std::vector<const char *>>>>{};
+
+    switch (orientation)
+    {
+    case Orientation::Vertical:
+        return mp[name][skin].second;
+        break;
+    case Orientation::Horizontal:
+        return std::vector{mp[name][skin].first};
+        break;
+    }
+}
+
 /* this is the actual game */
-auto start_game([[maybe_unused]] Player player_1, [[maybe_unused]] Player player_2) -> void
+auto start_game([[maybe_unused]] Player &p1, [[maybe_unused]] Player &p2) -> void
 {
     clear();
 
-    auto p1_primary_text = std::vector<const char *>{"    Primary Grid   ", "  A B C D E F G H I J", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-    auto p1_primary_attrs = std::vector<unsigned int>{A_NORMAL};
-    auto p1_primary_labels = Graphic{p1_primary_text, p1_primary_attrs, std::make_pair(2, 10)};
+    auto primary_text = {"    Primary Grid   ", "  A B C D E F G H I J", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+    auto primary_attrs = {A_NORMAL};
+    auto primary_labels = Graphic(primary_text, primary_attrs, 2, 10);
 
-    auto p1_tracking_text = std::vector<const char *>{"   Tracking Grid   ", "  A B C D E F G H I J", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-    auto p1_tracking_attrs = std::vector<unsigned int>{A_NORMAL};
-    auto p1_tracking_labels = Graphic{p1_tracking_text, p1_tracking_attrs, std::make_pair(2, 50)};
+    auto tracking_text = {"   Tracking Grid   ", "  A B C D E F G H I J", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+    auto tracking_attrs = {A_NORMAL};
+    auto tracking_labels = Graphic(tracking_text, tracking_attrs, 2, 50);
 
-    auto board_text = std::vector<const char *>{". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . .",
-                                                ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . ."};
-    auto board_attrs = std::vector<unsigned int>{A_DIM};
-    auto board_primary = Graphic{board_text, board_attrs, std::make_pair(4, 12)};
-    auto board_tracking = Graphic{board_text, board_attrs, std::make_pair(4, 52)};
+    auto board_text = {". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . .",
+                       ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . ."};
 
-    auto carrier_horz = std::vector<const char *>{"[XXXXXXX]"};
-    auto carrier_vert = std::vector<const char *>{"M", "X", "X", "X", "W"};
-    auto carrier_attrs = std::vector<unsigned int>{A_BOLD};
-    auto carrier = Ship(carrier_vert, carrier_horz, carrier_attrs, std::make_pair(16, 15));
+    auto board_attrs = {A_DIM};
+    auto board_primary = Graphic(board_text, board_attrs, 4, 12);
+    auto board_tracking = Graphic(board_text, board_attrs, 4, 52);
 
-    auto battleship_horz = std::vector<const char *>{"<&&&&&>"};
-    auto battleship_vert = std::vector<const char *>{"A", "&", "&", "V"};
-    auto battleship_attrs = std::vector<unsigned int>{A_BOLD};
-    auto battleship = Ship(battleship_vert, battleship_horz, battleship_attrs, std::make_pair(16, 25));
+    /*
+    auto carrier_horz = ship_skin(Carrier, p1.get_skin(), Horizontal);
+    auto carrier_vert = ship_skin(Carrier, p1.get_skin(), Vertical);
+    auto carrier_attrs = {A_BOLD};
+    auto carrier = Ship(carrier_vert, carrier_horz, carrier_attrs, 16, 15);
 
-    auto destroyer_horz = std::vector<const char *>{"[===>"};
-    auto destroyer_vert = std::vector<const char *>{"M", "H", "V"};
-    auto destroyer_attrs = std::vector<unsigned int>{A_BOLD};
-    auto destroyer = Ship(destroyer_vert, destroyer_horz, destroyer_attrs, std::make_pair(16, 35));
+    auto battleship_horz = ship_skin(Battleship, p1.get_skin(), Horizontal);
+    auto battleship_vert = ship_skin(Battleship, p1.get_skin(), Vertical);
+    auto battleship_attrs = {A_BOLD};
+    auto battleship = Ship(battleship_vert, battleship_horz, battleship_attrs, 16, 25);
 
-    auto submarine_horz = std::vector<const char *>{"(@)"};
-    auto submarine_vert = std::vector<const char *>{"n", "U"};
-    auto submarine_attrs = std::vector<unsigned int>{A_BOLD};
-    auto submarine = Ship(submarine_vert, submarine_horz, submarine_attrs, std::make_pair(16, 45));
+    auto destroyer_horz = {"[===>"};
+    auto destroyer_vert = {"M", "H", "V"};
+    auto destroyer_attrs = {A_BOLD};
+    auto destroyer = Ship(destroyer_vert, destroyer_horz, destroyer_attrs, 16, 35);
 
-    auto patrol_horz = std::vector<const char *>{"{:}"};
-    auto patrol_vert = std::vector<const char *>{"^", "V"};
-    auto patrol_attrs = std::vector<unsigned int>{A_BOLD};
-    auto patrol = Ship(patrol_vert, patrol_horz, patrol_attrs, std::make_pair(16, 55));
+    auto submarine_horz = {"(@)"};
+    auto submarine_vert = {"n", "U"};
+    auto submarine_attrs = {A_BOLD};
+    auto submarine = Ship(submarine_vert, submarine_horz, submarine_attrs, 16, 45);
+
+    auto patrol_horz = {"{:}"};
+    auto patrol_vert = {"^", "V"};
+    auto patrol_attrs = {A_BOLD};
+    auto patrol = Ship(patrol_vert, patrol_horz, patrol_attrs, 16, 55);
+    */
 
     box(stdscr, 0, 0);
     refresh();
 
     // TODO: show labels for each ship
-    show(p1_primary_labels);
-    show(p1_tracking_labels);
+    show(primary_labels);
+    show(tracking_labels);
     show(board_primary);
     show(board_tracking);
+    /*
     carrier.show(Vertical);
     battleship.show(Vertical);
     destroyer.show(Vertical);
     submarine.show(Vertical);
     patrol.show(Vertical);
+    */
     refresh();
 
     getch();
@@ -174,7 +216,7 @@ auto start_game([[maybe_unused]] Player player_1, [[maybe_unused]] Player player
 }
 
 /* game settings page */
-auto open_options() -> void
+auto open_options(Player &p1, Player &p2) -> void
 {
     clear();
     auto max_x = 0;
@@ -188,13 +230,13 @@ auto open_options() -> void
 
     auto p1_attrs = std::vector<unsigned int>{A_NORMAL};
 
-    auto p1 = Graphic{p1_text, p1_attrs, std::make_pair(5, 5)};
+    auto p1_graphic = Graphic{p1_text, p1_attrs, std::make_pair(5, 5)};
 
     box(stdscr, 0, 0);
     wrefresh(opts_win);
     refresh();
 
-    show(p1);
+    show(p1_graphic);
     wrefresh(opts_win);
     refresh();
     getch();

@@ -29,22 +29,22 @@ int main()
     validate_screen(stdscr);
 
     /* create main menu graphics */
-    auto logo_text = std::vector<const char *>{" _               __        ", "|_) _._|__|_| _ (_ |_ o._  ", "|_)(_| |_ |_|(/___)| |||_) ", "                       |   "};
-    auto play_text = std::vector<const char *>{"+-+-+-+-+", "|P|l|a|y|", "+-+-+-+-+"};
-    auto menu_text = std::vector<const char *>{"+-+-+-+-+", "|M|e|n|u|", "+-+-+-+-+"};
-    auto exit_text = std::vector<const char *>{"+-+-+-+-+", "|E|x|i|t|", "+-+-+-+-+"};
+    const auto logo_text = {" _               __        ", "|_) _._|__|_| _ (_ |_ o._  ", "|_)(_| |_ |_|(/___)| |||_) ", "                       |   "};
+    const auto play_text = {"+-+-+-+-+", "|P|l|a|y|", "+-+-+-+-+"};
+    const auto menu_text = {"+-+-+-+-+", "|M|e|n|u|", "+-+-+-+-+"};
+    const auto exit_text = {"+-+-+-+-+", "|E|x|i|t|", "+-+-+-+-+"};
 
-    auto play_attrs = std::vector<unsigned int>{A_BLINK};
-    auto menu_attrs = std::vector<unsigned int>{A_DIM};
-    auto exit_attrs = std::vector<unsigned int>{A_DIM};
-    auto logo_attrs = std::vector<unsigned int>{A_BOLD};
+    const auto logo_attrs = {A_BOLD};
+    const auto play_attrs = {A_BLINK};
+    const auto menu_attrs = {A_DIM};
+    const auto exit_attrs = {A_DIM};
 
-    auto logo = Graphic{logo_text, logo_attrs, std::make_pair(1, 26)};
-    auto g_button = Graphic{play_text, play_attrs, std::make_pair(6, 35)};
-    auto o_button = Graphic{menu_text, menu_attrs, std::make_pair(10, 35)};
-    auto e_button = Graphic{exit_text, exit_attrs, std::make_pair(14, 35)};
+    auto logo = Graphic(logo_text, logo_attrs, 1, 26);
+    auto g_button = Graphic(play_text, play_attrs, 6, 35);
+    auto o_button = Graphic(menu_text, menu_attrs, 10, 35);
+    auto e_button = Graphic(exit_text, exit_attrs, 14, 35);
 
-    auto graphics = std::vector<Graphic *>{&logo, &g_button, &o_button, &e_button};
+    const auto graphics = std::vector<Graphic *>{&logo, &g_button, &o_button, &e_button};
 
     /* player logic */
     auto p1 = Player("Gerald");
@@ -53,18 +53,16 @@ int main()
     /* game loop */
     auto active_button = 1u;
     auto last_button = 1u;
+    for (const auto &g : graphics)
+        g->show();
     while (auto ch = getch())
     {
-        /* show graphics */
-        for (const auto &g : graphics)
-            show(*g);
 
         /* handle keyboard events */
         auto key_press = parse_key(ch);
         switch (key_press)
         {
         case KeyPress::Illegal:
-            goto exit;
             break;
 
         case KeyPress::Up:
@@ -84,29 +82,27 @@ int main()
                 break;
 
             case 2:
-                open_options();
+                open_options(p1, p2);
                 break;
 
             case 3:
-                key_press = KeyPress::q;
+                endwin();
+                refresh();
+                return 0;
+                break;
             }
-            break;
-
-        case KeyPress::Left:
-            break;
-
-        case KeyPress::Right:
-            break;
 
         case KeyPress::h:
             show_help();
             break;
 
         case KeyPress::q:
-            goto exit;
+            endwin();
+            refresh();
+            return 0;
             break;
 
-        case KeyPress::r:
+        default:
             break;
         }
 
@@ -114,9 +110,11 @@ int main()
         graphics.at(last_button)->swap_attributes(A_BLINK, A_DIM);
         graphics.at(active_button)->swap_attributes(A_DIM, A_BLINK);
         last_button = active_button;
-    }
 
-exit:
+        /* show graphics */
+        for (const auto &g : graphics)
+            g->show();
+    }
 
     endwin();
     refresh();
