@@ -24,7 +24,7 @@ release: format
 	$(CC) $(CPPFLAGS) -O3 $(SRC) -o $(RELEASE)
 
 format:
-	clang-format -i $(SRC) --style="{BasedOnStyle: Microsoft, ColumnLimit: 200}"
+	clang-format -i $(SRC) --style="{BasedOnStyle: GNU, ColumnLimit: 200}"
 
 check:
 	clang-tidy -extra-arg=-std=c++20 $(SRC)

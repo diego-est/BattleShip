@@ -78,8 +78,8 @@ Sample grid:
 ```
 - Patrol Boat: 2
 ```
-  {:} o o o o o o o o
-  o o o o o o o o o o
+  {:} o o o o o o o ^
+  o o o o o o o o o V
   o o o o o o o o o o
   o o o o o o o o o o
   o o o o o o o o o o
