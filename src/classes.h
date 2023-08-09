@@ -80,7 +80,7 @@ enum Colors {
 };
 
 
-/* ====== class to store various information about text to be displayed ====== */
+/* ====== graphic class declaration ====== */
 class Graphic {
   /* === member fields === */
   std::vector<const char *> text;
@@ -94,55 +94,65 @@ class Graphic {
   Graphic(std::initializer_list<const char *> text, std::initializer_list<unsigned int> attributes, std::pair<size_t, size_t> coords);
   Graphic();
 
+
   /* === non-modifying member functions === */
   [[nodiscard]] auto get_text() const -> std::vector<const char *>;
   [[nodiscard]] auto get_attributes() const -> std::vector<unsigned int>;
   [[nodiscard]] auto get_coords() const -> std::pair<size_t, size_t>;
   auto show() const -> void;
 
+
   /* === modifying member functions === */
   auto set_text(std::span<const char *>) -> void;
+  auto set_text(std::vector<const char *>) -> void;
   auto set_attributes(std::span<unsigned int>) -> void;
+  auto set_attributes (std::vector<unsigned int> attributes) -> void;
   auto set_coords(size_t, size_t) -> void;
   auto set_coords(std::pair<size_t, size_t>) -> void;
   auto remove_attribute(unsigned int) -> void;
   auto add_attribute(unsigned int) -> void;
   auto swap_attributes(unsigned int, unsigned int) -> void;
+
 };
 
-/* =================== class to store text information and ship information =================== */
+/* =================== ship class declaration =================== */
 class Ship : public Graphic {
   /* === member fields === */
   std::vector<const char *> vertical;
   std::vector<const char *> horizontal;
   std::vector<unsigned int> attributes;
   std::pair<size_t, size_t> coords;
+  Orientation orientation;
   public:
   /* === constructors === */
   Ship();
-  Ship(std::vector<const char *>, std::vector<const char *>, std::vector<unsigned int>, std::pair<int, int>);
-  Ship(std::initializer_list<const char *> vertical, std::initializer_list<const char *> horizontal, std::initializer_list<unsigned int> attributes, std::pair<size_t, size_t> coords);
-  Ship(std::initializer_list<const char *> vertical, std::initializer_list<const char *> horizontal, std::initializer_list<unsigned int> attributes, size_t rows, size_t cols);
-  Ship(std::pair<std::initializer_list<const char *>, std::initializer_list<const char *>> skin_pair, size_t rows, size_t cols);
+  Ship(std::vector<const char *>, std::vector<const char *>, std::vector<unsigned int>, std::pair<int, int>, Orientation);
+  Ship(std::initializer_list<const char *> vertical, std::initializer_list<const char *> horizontal, std::initializer_list<unsigned int> attributes, std::pair<size_t, size_t> coords, Orientation);
+  Ship(std::initializer_list<const char *> vertical, std::initializer_list<const char *> horizontal, std::initializer_list<unsigned int> attributes, size_t rows, size_t cols, Orientation);
+  Ship(std::pair<std::initializer_list<const char *>, std::initializer_list<const char *>> skin_pair, size_t rows, size_t cols, Orientation);
+
 
   /* === non-modifying member functions === */
   [[nodiscard]] auto get_vert() const -> std::vector<const char *>;
   [[nodiscard]] auto get_horz() const -> std::vector<const char *>;
   [[nodiscard]] auto get_attributes() const -> std::vector<unsigned int>;
   [[nodiscard]] auto get_coords() const -> std::pair<size_t, size_t>;
-  auto show(Orientation) const -> void;
+  auto show() const -> void;
+
 
   /* === modifying member functions === */
-  auto remove_attribute(unsigned int) -> void;
-  auto add_attribute(unsigned int) -> void;
-  auto swap_attributes(unsigned int, unsigned int) -> void;
   auto set_coords(size_t, size_t) -> void;
   auto set_coords(std::pair<size_t, size_t>) -> void;
   auto set_skin(std::pair<std::span<const char *>, std::span<const char *>> skin_pair) -> void;
+  auto set_orientation (Orientation orientation) -> void;
+  auto remove_attribute(unsigned int) -> void;
+  auto add_attribute(unsigned int) -> void;
+  auto swap_attributes(unsigned int, unsigned int) -> void;
+
 };
 
 
-/* =================== player class (one for each player, two total) =================== */
+/* =================== player class declaration =================== */
 class Player {
   /* === member fields === */
   std::string name;
@@ -157,18 +167,25 @@ class Player {
   std::unordered_map<ShipName, std::unordered_map<Skin, std::pair< std::initializer_list<const char *>, std::initializer_list<const char *>>>> ship_skins;
   public:
   /* === constructors === */
-  Player(const char *name, Skin skin = Skin::Normal);
+  Player(const char *name);
+
 
   /* === non-modifying member functions === */
   [[nodiscard]] auto get_name() const -> std::string;
   [[nodiscard]] auto get_skin() const -> Skin;
   [[nodiscard]] auto get_points() const -> unsigned int;
+  auto show(ShipName) const -> void;
+  auto show_ships() const -> void;
+
 
   /* === modifying member functions === */
   auto set_name(std::string) -> void;
   auto set_skin(Skin) -> void;
   auto set_points(unsigned int) -> void;
   auto update_skin_cache() -> void;
+  auto update_skins() -> void;
+  auto init_positions() -> void;
+
 };
 
 #endif

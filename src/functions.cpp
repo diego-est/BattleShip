@@ -18,7 +18,7 @@
 
 /* game settings page */
 auto
-open_options (Player &p1, Player &p2) -> void
+open_options ([[maybe_unused]] Player &p1, [[maybe_unused]] Player &p2) -> void
 {
   clear ();
   auto max_x = 0;
@@ -32,13 +32,13 @@ open_options (Player &p1, Player &p2) -> void
 
   auto p1_attrs = std::vector<unsigned int>{ A_NORMAL };
 
-  auto p1_graphic = Graphic{ p1_text, p1_attrs, std::make_pair (5, 5) };
+  auto p1_graphic = Graphic (p1_text, p1_attrs, 5, 5);
 
   box (stdscr, 0, 0);
   wrefresh (opts_win);
   refresh ();
 
-  show (p1_graphic);
+  p1_graphic.show ();
   wrefresh (opts_win);
   refresh ();
   getch ();
@@ -86,13 +86,13 @@ parse_key (const int ch) -> KeyPress
 /* checks if screen is valid */
 // TODO: update values as screen gets resized
 [[nodiscard]] auto
-screen_is_valid (const std::pair<std::size_t, std::size_t> size) -> bool
+screen_is_valid (const int rows, const int cols) -> bool
 {
-  return (size.first >= 25 && size.second >= 80);
+  return (rows >= 25 && cols >= 80);
 }
 
 /* function to display a window at a set position with a set number of attributes */
-auto
+[[deprecated]] auto
 show (const Graphic &graph) -> void
 {
   // set attributes
@@ -141,48 +141,15 @@ start_game ([[maybe_unused]] Player &p1, [[maybe_unused]] Player &p2) -> void
   auto board_primary = Graphic (board_text, board_attrs, 4, 12);
   auto board_tracking = Graphic (board_text, board_attrs, 4, 52);
 
-  /*
-  auto carrier_horz = ship_skin(Carrier, p1.get_skin(), Horizontal);
-  auto carrier_vert = ship_skin(Carrier, p1.get_skin(), Vertical);
-  auto carrier_attrs = {A_BOLD};
-  auto carrier = Ship(carrier_vert, carrier_horz, carrier_attrs, 16, 15);
-
-  auto battleship_horz = ship_skin(Battleship, p1.get_skin(), Horizontal);
-  auto battleship_vert = ship_skin(Battleship, p1.get_skin(), Vertical);
-  auto battleship_attrs = {A_BOLD};
-  auto battleship = Ship(battleship_vert, battleship_horz, battleship_attrs, 16, 25);
-
-  auto destroyer_horz = {"[===>"};
-  auto destroyer_vert = {"M", "H", "V"};
-  auto destroyer_attrs = {A_BOLD};
-  auto destroyer = Ship(destroyer_vert, destroyer_horz, destroyer_attrs, 16, 35);
-
-  auto submarine_horz = {"(@)"};
-  auto submarine_vert = {"n", "U"};
-  auto submarine_attrs = {A_BOLD};
-  auto submarine = Ship(submarine_vert, submarine_horz, submarine_attrs, 16, 45);
-
-  auto patrol_horz = {"{:}"};
-  auto patrol_vert = {"^", "V"};
-  auto patrol_attrs = {A_BOLD};
-  auto patrol = Ship(patrol_vert, patrol_horz, patrol_attrs, 16, 55);
-  */
-
-  box (stdscr, 0, 0);
-  refresh ();
+  auto labels = { primary_labels, tracking_labels, board_primary, board_tracking };
 
   // TODO: show labels for each ship
-  show (primary_labels);
-  show (tracking_labels);
-  show (board_primary);
-  show (board_tracking);
-  /*
-  carrier.show(Vertical);
-  battleship.show(Vertical);
-  destroyer.show(Vertical);
-  submarine.show(Vertical);
-  patrol.show(Vertical);
-  */
+  for (const auto &l : labels)
+    l.show ();
+
+  p1.show_ships ();
+
+  box (stdscr, 0, 0);
   refresh ();
 
   getch ();
@@ -194,22 +161,20 @@ start_game ([[maybe_unused]] Player &p1, [[maybe_unused]] Player &p2) -> void
 auto
 validate_screen (const WINDOW *win) -> void
 {
-  auto y = getmaxy (win);
-  auto x = getmaxx (win);
-  auto size = std::make_pair (y, x);
+  auto rows = getmaxy (win);
+  auto cols = getmaxx (win);
 
-  while (!screen_is_valid (size))
+  while (!screen_is_valid (rows, cols))
     {
       printw ("Terminal screen too small.\n"
               "Minimum size must be 80 columns, 25 rows.\n"
-              "Your screen is %d columns, %d rows.\n"
+              "Your screen is %d rows, %d columns.\n"
               "Press any key to retry.\n\n",
-              size.second, size.first);
+              rows, cols);
       refresh ();
       mvgetch (0, 0);
       clear ();
-      getmaxyx (win, y, x);
-      size = std::make_pair (y, x);
+      getmaxyx (win, rows, cols);
     }
 
   refresh ();
