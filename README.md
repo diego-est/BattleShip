@@ -1,4 +1,33 @@
 # BattleShip
+## Classes
+### `Graphic`
+1. Purpose:
+  - Hold all the required information needed to display a simple graphic on the screen.
+2. Public Methods:
+  - Value returning:
+    - `[[nodiscard]] auto get_win() const -> WINDOW *`
+    - `[[nodiscard]] auto get_text() const -> std::vector<const char *>`
+    - `[[nodiscard]] auto get_attributes() const -> std::vector<unsigned int>`
+    - `[[nodiscard]] auto get_coords() const -> std::pair<size_t, size_t>`
+  - Void:
+    - `auto show() const -> void`
+    - `auto set_win(WINDOW *) -> void`
+    - `auto set_text(std::span<const char *>) -> void`
+    - `auto set_text(std::initializer_list<unsigned int>) -> void`
+### `Ship : Graphic`
+1. Purpose:
+  - Hold extra information needed to display an entire ship entity.
+2. Public Methods:
+  - Value returning:
+  - Void:
+### `Player`
+1. Purpose:
+  - Hold and manage information pertaining to a specific player.
+2. Public Methods:
+  - Value returning:
+  - Void:
+
+## Assets
 
 Logo:
 ```

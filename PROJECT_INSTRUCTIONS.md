@@ -26,7 +26,7 @@ The objective is to help students practice their programming and problem-solving
 - Connect Four:
   - A two-player game where players take turns dropping colored discs into a vertical grid. The first player to get four discs in a row horizontally, vertically, or diagonally wins.
 - *Battleship:*
-  - A two-player game where each player places ships on a grid and takes turns guessing the location of the opponent’s ships. The goal is to sink all of the opponent’s ships.
+  - A two-player game where each player places ships on a grid and takes turns guessing the location of the opponent’s ships. The goal is to sink all the opponent’s ships.
 
 ### Requirements:
 
@@ -40,25 +40,25 @@ The objective is to help students practice their programming and problem-solving
 
 Points will be assigned based on the following grading rubric.
 1. Functionality (40 points):
-  - The game follows the project requirements.
-  - The game is free of major bugs or errors (e.g. program doesn’t crash from valid or expected player input).
-  - The player can make valid moves and the game updates accordingly.
-  - The game ends correctly and displays if the player has won or lost.
-  - The player can restart the game or exit the program during gameplay.
+ - The game follows the project requirements.
+ - The game is free of major bugs or errors (e.g. program doesn’t crash from valid or expected player input).
+ - The player can make valid moves and the game updates accordingly.
+ - The game ends correctly and displays if the player has won or lost.
+ - The player can restart the game or exit the program during gameplay.
 2. User Interface (30 points):
-  - The game has a clear and intuitive user interface.
-  - The game’s menus and options are easy to navigate and understand.
-  - The game’s text-based graphics are visually appealing and enhance the gameplay ex- perience.
+ - The game has a clear and intuitive user interface.
+ - The game’s menus and options are easy to navigate and understand.
+ - The game’s text-based graphics are visually appealing and enhance the gameplay experience.
 3. Code Quality (30 points):
-  - Code is well-organized and easy to read.
-  - Code follows good programming practices as mentioned in class.
-  - Code is properly commented.
-  - The code must have appropriate use of functions, loops, and conditional statements.
-  - The code must have appropriate use of data structures, such as arrays, if needed.
-  - Program contains a README file with the specified requirements.
+ - Code is well-organized and easy to read.
+ - Code follows good programming practices as mentioned in class.
+ - Code is properly commented.
+ - The code must have appropriate use of functions, loops, and conditional statements.
+ - The code must have appropriate use of data structures, such as arrays, if needed.
+ - Program contains a README file with the specified requirements.
 4. Creativity (BONUS: up to 10 points):
-  - The game has an original and creative addition.
-  - The game has a visually appealing or themed interface.
-  - The game has additional features or modes that enhance the gameplay.
+ - The game has an original and creative addition.
+ - The game has a visually appealing or themed interface.
+ - The game has additional features or modes that enhance the gameplay.
 
 # TOTAL: 100 points.

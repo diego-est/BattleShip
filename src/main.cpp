@@ -16,8 +16,6 @@
 #include "classes.h"
 #include "functions.h"
 
-namespace ra = std::ranges;
-
 int
 main ()
 {
@@ -48,29 +46,29 @@ main ()
   const auto graphics = std::vector<Graphic *>{ &logo, &g_button, &o_button, &e_button };
 
   /* player logic */
-  auto p1 = Player ("Gerald");
-  auto p2 = Player ("Simon");
+  auto p1 = Player ("Geri", newwin (25, 80, 0, 0));
+  auto p2 = Player ("Simon", newwin (25, 80, 0, 0));
 
   /* game loop */
-  auto active_button = 1u;
-  auto last_button = 1u;
+  auto active_button = 1zu;
+  auto last_button = 1zu;
   for (const auto &g : graphics)
     g->show ();
-  while (auto ch = getch ())
+  while (const auto ch = getch ())
     {
       /* handle keyboard events */
-      auto key_press = parse_key (ch);
+      const auto key_press = parse_key (ch);
       switch (key_press)
         {
         case KeyPress::Illegal:
           break;
 
         case KeyPress::Up:
-          active_button = active_button == 1 ? 3 : active_button - 1;
+          active_button = std::clamp (active_button - 1, 1zu, 3zu);
           break;
 
         case KeyPress::Down:
-          active_button = active_button == 3 ? 1 : active_button + 1;
+          active_button = std::clamp (active_button + 1, 1zu, 3zu);
           break;
 
         case KeyPress::Enter:
@@ -86,20 +84,17 @@ main ()
               break;
 
             case 3:
-              endwin ();
-              refresh ();
-              return 0;
+              goto Exit;
               break;
             }
+          break;
 
         case KeyPress::h:
           show_help ();
           break;
 
         case KeyPress::q:
-          endwin ();
-          refresh ();
-          return 0;
+          goto Exit;
           break;
 
         default:
@@ -116,6 +111,9 @@ main ()
         g->show ();
     }
 
+Exit:
+  clear ();
+  mvprintw (12, 30, "Thanks for playing!\n");
   endwin ();
   refresh ();
 

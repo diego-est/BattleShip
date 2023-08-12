@@ -84,7 +84,6 @@ parse_key (const int ch) -> KeyPress
 }
 
 /* checks if screen is valid */
-// TODO: update values as screen gets resized
 [[nodiscard]] auto
 screen_is_valid (const int rows, const int cols) -> bool
 {
@@ -103,7 +102,7 @@ show (const Graphic &graph) -> void
   auto i = 0lu;
   for (const auto &l : graph.get_text ())
     {
-      mvwprintw (stdscr, graph.get_coords ().first + i, graph.get_coords ().second, "%s", l);
+      mvprintw (graph.get_coords ().first + i, graph.get_coords ().second, "%s", l);
       i++;
     }
 
@@ -117,47 +116,118 @@ show (const Graphic &graph) -> void
 auto
 show_help () -> void
 {
-  // TODO: add help menu
+  clear ();
+  mvprintw (4, 4, "message");
+  while (const auto ch = getch ())
+    {
+      const auto key_press = parse_key (ch);
+      switch (key_press)
+        {
+        case KeyPress::q:
+          clear ();
+          return;
+          break;
+
+        case KeyPress::Up:
+          break;
+
+        case KeyPress::Down:
+          break;
+
+        case KeyPress::Left:
+          break;
+
+        case KeyPress::Right:
+          break;
+
+        default:
+          break;
+        }
+    }
+  clear ();
 }
 
 /* this is the actual game */
 auto
-start_game ([[maybe_unused]] Player &p1, [[maybe_unused]] Player &p2) -> void
+start_game (Player &p1, Player &p2) -> void
 {
-  clear ();
+  box (p1.get_win (), 0, 0);
+  p1.show_boards ();
+  mvwprintw (p1.get_win (), 1, 37, "%u - %u", p1.get_points (), p2.get_points ());
+  mvwprintw (p1.get_win (), 2, 33, "Place your ships!");
+  wrefresh (p1.get_win ());
 
-  auto primary_text = { "    Primary Grid   ", "  A B C D E F G H I J", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-  auto primary_attrs = { A_NORMAL };
-  auto primary_labels = Graphic (primary_text, primary_attrs, 2, 10);
+  /* place carrier */
+  auto row = 4zu;
+  auto col = 12zu;
+  auto orientation = p1.get_ship (Carrier).get_orient ();
+  p1.ship_coords (Carrier, row, col);
+  p1.show (Carrier);
+  while (const auto ch = getch ())
+    {
 
-  auto tracking_text = { "   Tracking Grid   ", "  A B C D E F G H I J", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-  auto tracking_attrs = { A_NORMAL };
-  auto tracking_labels = Graphic (tracking_text, tracking_attrs, 2, 50);
+      const auto key_press = parse_key (ch);
+      switch (key_press)
+        {
+        case KeyPress::Up:
+          row = row == 4 ? 4 : row - 1;
+          break;
 
-  auto board_text = { ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . .",
-                      ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . .", ". . . . . . . . . ." };
+        case KeyPress::Down:
+          if (orientation == Vertical)
+            row = row == 9 ? 9 : row + 1;
+          else
+            row = row == 13 ? 13 : row + 1;
+          break;
 
-  auto board_attrs = { A_DIM };
-  auto board_primary = Graphic (board_text, board_attrs, 4, 12);
-  auto board_tracking = Graphic (board_text, board_attrs, 4, 52);
+        case KeyPress::Left:
+          col = col == 12 ? 12 : col - 2;
+          break;
 
-  auto labels = { primary_labels, tracking_labels, board_primary, board_tracking };
+        case KeyPress::Right:
+          if (orientation == Horizontal)
+            col = col == 22 ? 22 : col + 2;
+          else
+            col = col == 30 ? 30 : col + 2;
+          break;
 
-  // TODO: show labels for each ship
-  for (const auto &l : labels)
-    l.show ();
+        case KeyPress::r:
+          if (col >= 24 && orientation == Vertical)
+            continue;
+          else if (row >= 10 && orientation == Horizontal)
+            continue;
+          else
+            orientation = orientation == Vertical ? Horizontal : Vertical;
+          break;
 
-  p1.show_ships ();
+        case KeyPress::h:
+          show_help ();
+          break;
 
-  box (stdscr, 0, 0);
-  refresh ();
+        case KeyPress::q:
+          clear ();
+          return;
+          break;
 
-  getch ();
+        case KeyPress::Enter:
+          goto NextShip;
+          break;
+
+        default:
+          break;
+        }
+
+      p1.ship_coords (Carrier, row, col);
+      p1.ship_orient (Carrier, orientation);
+      p1.show_boards ();
+      p1.show (Carrier);
+      wrefresh (p1.get_win ());
+    }
+NextShip:
   clear ();
 }
 
 /* validates a screen size */
-// TODO: update values as screen gets resized
 auto
 validate_screen (const WINDOW *win) -> void
 {

@@ -4,8 +4,8 @@
 SRC = ./src/main.cpp ./src/functions.cpp ./src/classes.cpp
 CC = clang++
 CPPFLAGS = -Wconversion -Wall -Wextra -pedantic -lncursesw --std=c++2b
-DEBUG = ./build/debug
-RELEASE = ./build/release
+DEBUG = ./build/debug/a.out
+RELEASE = ./build/release/release.out
 
 all: options build
 
